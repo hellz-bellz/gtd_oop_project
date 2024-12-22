@@ -2,7 +2,7 @@ import typer
 from gtd.gtd_system import GTDSystem
 from gtd.task import Task
 from gtd.kanban import KanbanBoard
-
+import shlex
 
 app = typer.Typer()
 
@@ -118,6 +118,7 @@ def list_habits():
 def interactive_mode():
     """Интерактивный режим."""
     typer.echo("Добро пожаловать в GTD System!")
+    
     while True:
         try:
             command = input("GTD > ").strip()
@@ -125,7 +126,10 @@ def interactive_mode():
                 typer.echo("Выход из GTD System. До свидания!")
                 break
             if command:
-                typer.run(lambda: app(command.split()))
+                args = shlex.split(command)
+                app(args)
+        except SystemExit:
+            continue
         except Exception as e:
             typer.echo(f"Ошибка: {e}")
 
