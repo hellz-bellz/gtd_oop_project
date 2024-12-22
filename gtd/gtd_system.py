@@ -166,5 +166,3 @@ class GTDSystem:
         """Отметить выполнение привычки."""
         self.habit_tracker.mark_done(name)  
         self.save_data()
-
-
