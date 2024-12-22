@@ -10,12 +10,21 @@ gtd_system = GTDSystem()
 
 
 @app.command()
-def add_task(title: str, due_date: str = typer.Option(None), priority: int = 0, tags: str = ""):
-    """Добавить задачу в Inbox."""
+def add_task(title: str, due_date: str = typer.Option(None), priority: int = 0, tags: str = "", project: str = typer.Option(None, help="Имя проекта")):
+    """Добавить задачу в Inbox или указанный проект."""
     tag_list = tags.split(",") if tags else []
     task = Task(title, due_date=due_date, priority=priority, tags=tag_list)
-    gtd_system.add_to_inbox(task)
-    typer.echo(f"Задача '{title}' добавлена в Inbox.")
+    if project:
+        if project in gtd_system.projects:
+            gtd_system.projects[project].add_task(task)
+            gtd_system.save_data()
+            typer.echo(f"Задача '{title}' добавлена в проект '{project}'.")
+        else:
+            typer.echo(f"Проект '{project}' не найден. Задача добавлена в Inbox.")
+            gtd_system.add_to_inbox(task)
+    else:
+        gtd_system.add_to_inbox(task)
+        typer.echo(f"Задача '{title}' добавлена в Inbox.")
 
 
 @app.command()
@@ -58,11 +67,21 @@ def update_task_status(title: str, status: str):
         typer.echo(f"Ошибка: Недопустимый статус '{status}'. Допустимые статусы: {', '.join(valid_statuses)}.")
         raise typer.Exit()
 
+    # Поиск задачи в Inbox
     task = next((t for t in gtd_system.inbox if t.title == title), None)
+    
+    # Если задачи нет в Inbox, ищем в проектах
     if not task:
-        typer.echo(f"Задача '{title}' не найдена в Inbox.")
+        for project in gtd_system.projects.values():
+            task = next((t for t in project.tasks if t.title == title), None)
+            if task:
+                break
+
+    if not task:
+        typer.echo(f"Задача '{title}' не найдена ни в Inbox, ни в проектах.")
         raise typer.Exit()
 
+    # Обновление статуса задачи
     task.update_status(status)
     gtd_system.save_data()
     typer.echo(f"Статус задачи '{title}' обновлен на '{status}'.")
