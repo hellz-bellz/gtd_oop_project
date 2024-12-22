@@ -105,3 +105,17 @@ class GTDSystem:
         self.projects[project_name].add_task(task)
         self.inbox.remove(task)
         self.save_data()
+    
+    def display_projects(self):
+        """Отображает список проектов и их задачи."""
+        if not self.projects:
+            print("Нет проектов.")
+        else:
+            print("Список проектов и их задачи:")
+            for project_name, project in self.projects.items():
+                print(f"\nПроект: {project_name} (Теги: {', '.join(project.tags)})")
+                if not project.tasks:
+                    print("  Нет задач.")
+                else:
+                    for task in project.tasks:
+                        print(f"  - {task}")
