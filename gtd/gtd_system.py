@@ -50,13 +50,15 @@ class GTDSystem:
             }, (query.type == "project") & (query.name == project_name))
 
         # Сохраняем привычки
-        for habit, data in self.habit_tracker.habits.items():
+        for habit in self.habit_tracker.habits.values():
             self.db.upsert({
                 "type": "habit",
-                "name": habit,
-                "target_days": data["target_days"],
-                "progress": data["progress"]
-            }, (query.type == "habit") & (query.name == habit))
+                "name": habit.title,
+                "target_days": habit.target_days,
+                "progress": habit.progress,
+                "tags": habit.tags
+            }, (query.type == "habit") & (query.name == habit.title))
+
 
     def load_data(self):
         """Загружает задачи, проекты и привычки из базы данных."""
@@ -87,10 +89,13 @@ class GTDSystem:
                     project.add_task(task)
                 self.projects[project.name] = project
             elif item["type"] == "habit":
-                self.habit_tracker.habits[item["name"]] = {
-                    "target_days": item["target_days"],
-                    "progress": item["progress"]
-                }
+                habit = Habit(
+                    title=item["name"],
+                    target_days=item["target_days"],
+                    tags=item.get("tags", [])
+                )
+                habit.progress = item["progress"]
+                self.habit_tracker.habits[item["name"]] = habit
 
     def add_to_inbox(self, task):
         self.inbox.append(task)
