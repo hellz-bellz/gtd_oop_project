@@ -2,6 +2,7 @@ from tinydb import TinyDB, Query
 from gtd.task import Task
 from gtd.project import Project
 from gtd.habit_tracker import HabitTracker
+from datetime import datetime, timedelta
 
 class GTDSystem:
     def __init__(self, db_path="data/tasks.json"):
@@ -46,7 +47,7 @@ class GTDSystem:
                     }
                     for task in project.tasks
                 ]
-            }, (query.type == "project") & (query.name == project.name))
+            }, (query.type == "project") & (query.name == project_name))
 
         # Сохраняем привычки
         for habit, data in self.habit_tracker.habits.items():
@@ -119,3 +120,51 @@ class GTDSystem:
                 else:
                     for task in project.tasks:
                         print(f"  - {task}")
+    
+
+    def get_tasks_for_period(self, start_date, end_date):
+        """Возвращает задачи, которые запланированы на заданный период."""
+        tasks = []
+        for task in self.inbox:
+            if task.due_date and start_date <= datetime.strptime(task.due_date, "%Y-%m-%d") <= end_date:
+                tasks.append(task)
+        for project in self.projects.values():
+            for task in project.tasks:
+                if task.due_date and start_date <= datetime.strptime(task.due_date, "%Y-%m-%d") <= end_date:
+                    tasks.append(task)
+        return tasks
+
+    def display_schedule(self, period="day"):
+        """Отображает расписание задач на текущий день, неделю или месяц."""
+        now = datetime.now()
+        if period == "day":
+            start_date = now
+            end_date = now + timedelta(days=1)
+        elif period == "week":
+            start_date = now
+            end_date = now + timedelta(days=7)
+        elif period == "month":
+            start_date = now
+            end_date = now + timedelta(days=30)
+        else:
+            raise ValueError("Допустимые значения для периода: 'day', 'week', 'month'.")
+
+        tasks = self.get_tasks_for_period(start_date, end_date)
+        if not tasks:
+            print(f"Нет задач на {period}.")
+        else:
+            print(f"Задачи на {period}:")
+            for task in tasks:
+                print(f"  - {task}")
+
+    def add_habit(self, name, target_days):
+        """Добавить привычку в трекер."""
+        self.habit_tracker.add_habit(name, target_days)
+        self.save_data() 
+
+    def mark_habit_done(self, name):
+        """Отметить выполнение привычки."""
+        self.habit_tracker.mark_done(name)  
+        self.save_data()
+
+
