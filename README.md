@@ -58,3 +58,7 @@ Add a habit:
   ```bash
   python cli.py add-habit "Read a book" --target-days 30
   ```
+
+## Пример работы GTD-системы
+
+![Пример работы GTD-системы](gtd_tasks_DL.png)
