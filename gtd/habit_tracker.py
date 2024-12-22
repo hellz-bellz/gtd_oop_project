@@ -1,18 +1,18 @@
-class HabitTracker:
-    def __init__(self):
-        self.habits = {}
+from gtd.base_item import BaseItem
+from typing import Optional
 
-    def add_habit(self, name, target_days):
-        self.habits[name] = {"target_days": target_days, "progress": 0}
+class Habit(BaseItem):
+    def __init__(self, title: str, target_days: int, tags: Optional[List[str]] = None):
+        super().__init__(title, tags)
+        self.target_days = target_days
+        self.progress = 0
 
-    def mark_done(self, name):
-        if name in self.habits:
-            self.habits[name]["progress"] += 1
-        else:
-            raise ValueError(f"Привычка '{name}' не найдена.")
+    def mark_done(self):
+        self.progress += 1
 
-    def get_progress(self):
-        return {
-            habit: f"{data['progress']} / {data['target_days']}"
-            for habit, data in self.habits.items()
-        }
+    def is_completed(self):
+        return self.progress >= self.target_days
+
+    def __str__(self):
+        status = "Завершено" if self.is_completed() else f"{self.progress} / {self.target_days}"
+        return f"{super().__str__()}, Прогресс: {status}"
