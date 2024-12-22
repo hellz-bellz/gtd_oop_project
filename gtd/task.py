@@ -1,10 +1,12 @@
 from datetime import datetime
+from gtd.base_item import BaseItem
+from typing import Optional
 
-class Task:
+class Task(BaseItem):
     STATUSES = ["Ожидает", "В процессе", "На проверке", "Завершена"]
 
-    def __init__(self, title, due_date=None, priority=0, context=None, tags=None):
-        self.title = title
+   def __init__(self, title: str, due_date: Optional[str] = None, priority: int = 0, tags: Optional[List[str]] = None):
+        super().__init__(title, tags)
         self.due_date = due_date
         self.priority = priority
         self.context = context or "General"
