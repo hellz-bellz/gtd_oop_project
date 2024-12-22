@@ -15,6 +15,7 @@ This is a task management system inspired by the Getting Things Done (GTD) metho
 /gtd_project/
 ├── gtd/
 │   ├── __init__.py
+│   ├── base_item.py
 │   ├── task.py
 │   ├── project.py
 │   ├── gtd_system.py
