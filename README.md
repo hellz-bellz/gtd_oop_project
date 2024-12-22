@@ -105,7 +105,7 @@ Delete a habit:
 
 ## Example Scenario: Deep Learning Project Management
 
-![DL](gtd_tasks_DL.png)
+![DL](gtd_tasks_DL.jpg)
 
 1. **Create a project:**
    ```bash
@@ -141,7 +141,7 @@ Delete a habit:
 
 ## Example Scenario: Habit Tracker Management
 
-![DL](gtd_habits.png)
+![DL](gtd_habits.jpg)
 
 1. **Add habits:**
    ```bash
