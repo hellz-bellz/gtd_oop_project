@@ -1,10 +1,11 @@
 import typer
 from gtd.gtd_system import GTDSystem
 from gtd.task import Task
+from gtd.kanban import KanbanBoard
+
 
 app = typer.Typer()
 
-# Инициализируем систему GTD
 gtd_system = GTDSystem()
 
 
@@ -49,6 +50,28 @@ def add_task_to_project(task_title: str, project_name: str):
     except ValueError as e:
         typer.echo(f"Ошибка: {e}")
 
+@app.command()
+def update_task_status(title: str, status: str):
+    """Обновить статус задачи."""
+    valid_statuses = ["Ожидает", "В процессе", "На проверке", "Завершена"]
+    if status not in valid_statuses:
+        typer.echo(f"Ошибка: Недопустимый статус '{status}'. Допустимые статусы: {', '.join(valid_statuses)}.")
+        raise typer.Exit()
+
+    task = next((t for t in gtd_system.inbox if t.title == title), None)
+    if not task:
+        typer.echo(f"Задача '{title}' не найдена в Inbox.")
+        raise typer.Exit()
+
+    task.update_status(status)
+    gtd_system.save_data()
+    typer.echo(f"Статус задачи '{title}' обновлен на '{status}'.")
+
+@app.command()
+def kanban():
+    """Показать Канбан-доску."""
+    board = KanbanBoard(gtd_system)
+    board.display()
 
 @app.command()
 def list_projects():
