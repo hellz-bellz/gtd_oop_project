@@ -88,18 +88,19 @@ def schedule(period: str = typer.Option("day", help="Период: day, week, mo
 @app.command()
 def add_habit(name: str, target_days: int):
     """Добавить привычку."""
-    gtd_system.habit_tracker.add_habit(name, target_days)
+    gtd_system.add_habit(name, target_days)
     typer.echo(f"Привычка '{name}' добавлена с целью выполнения {target_days} дней.")
 
 
 @app.command()
 def mark_habit_done(name: str):
-    """Отметить прогресс по привычке."""
+    """Отметить выполнение привычки."""
     try:
-        gtd_system.habit_tracker.mark_done(name)
+        gtd_system.mark_habit_done(name)
         typer.echo(f"Прогресс по привычке '{name}' отмечен.")
     except ValueError as e:
         typer.echo(f"Ошибка: {e}")
+
 
 
 @app.command()
@@ -114,5 +115,21 @@ def list_habits():
             typer.echo(f"  - {habit}: {status}")
 
 
+def interactive_mode():
+    """Интерактивный режим."""
+    typer.echo("Добро пожаловать в GTD System!")
+    while True:
+        try:
+            command = input("GTD > ").strip()
+            if command in ["exit", "quit"]:
+                typer.echo("Выход из GTD System. До свидания!")
+                break
+            if command:
+                typer.run(lambda: app(command.split()))
+        except Exception as e:
+            typer.echo(f"Ошибка: {e}")
+
+
 if __name__ == "__main__":
-    app()
+    interactive_mode()
+
