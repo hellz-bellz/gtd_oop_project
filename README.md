@@ -10,6 +10,30 @@ This is a task management system inspired by the Getting Things Done (GTD) metho
 - Track habits with progress visualization.
 - Visualize tasks in a Kanban board.
 
+## Structure
+```bash
+/gtd_project/
+├── gtd/
+│   ├── __init__.py
+│   ├── task.py
+│   ├── project.py
+│   ├── gtd_system.py
+│   ├── kanban.py
+│   ├── habit_tracker.py
+│   ├── exceptions.py
+├── tests/
+│   ├── test_task.py
+│   ├── test_project.py
+│   ├── test_gtd_system.py
+│   ├── test_habit_tracker.py
+│   └── test_kanban.py
+├── requirements.txt
+├── README.md
+├── cli.py
+└── main.py
+```
+
+
 ## Installation
 ```bash
 pip install -r requirements.txt
